@@ -1,0 +1,72 @@
+name: Auto Merge Down
+
+on:
+  push:
+    branches:
+      - main
+      - beta
+  workflow_run:
+    workflows: ["Release"]
+    types:
+      - completed
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  merge-down:
+    name: Merge Down
+    runs-on: ubuntu-latest
+    if: github.event_name == 'push' || (github.event.workflow_run.conclusion == 'success')
+    
+    permissions:
+      contents: write
+      pull-requests: write
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Setup Git
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+
+      - name: Merge main to beta
+        if: github.ref == 'refs/heads/main'
+        run: |
+          git checkout beta
+          git pull origin beta
+          git merge main --no-ff -m "chore: merge main into beta [skip ci]"
+          git push origin beta
+
+      - name: Merge beta to alpha
+        if: github.ref == 'refs/heads/main' || github.ref == 'refs/heads/beta'
+        run: |
+          git checkout alpha
+          git pull origin alpha
+          git merge beta --no-ff -m "chore: merge beta into alpha [skip ci]"
+          git push origin alpha
+
+      - name: Check version conflicts and create PR if needed
+        if: github.ref == 'refs/heads/beta'
+        run: |
+          # 检查 alpha 分支是否需要版本重置
+          git checkout alpha
+          ALPHA_VERSION=$(git describe --tags --abbrev=0 2>/dev/null | grep -E "alpha" | head -1 || echo "")
+          git checkout beta
+          BETA_VERSION=$(git describe --tags --abbrev=0 2>/dev/null | grep -E "beta" | head -1 || echo "")
+          
+          if [ -n "$BETA_VERSION" ] && [ -n "$ALPHA_VERSION" ]; then
+            BETA_BASE=$(echo $BETA_VERSION | sed 's/-beta.*//')
+            ALPHA_BASE=$(echo $ALPHA_VERSION | sed 's/-alpha.*//')
+            
+            if [ "$BETA_BASE" = "$ALPHA_BASE" ]; then
+              echo "Alpha branch needs version bump due to beta release"
+              echo "NEEDS_VERSION_BUMP=true" >> $GITHUB_ENV
+            fi
+          fi
