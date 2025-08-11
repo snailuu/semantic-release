@@ -1,5 +1,17 @@
 ### 🚀 New Alpha Development Cycle
 
+This alpha version starts a new development cycle after upstream releases.
+
+
+
+## [1.0.0-alpha.6](https://github.com/snailuu/semantic-release/compare/v1.0.0-alpha.5...v1.0.0-alpha.6) (2025-08-11)
+
+### Features
+
+* enhance version management plugin with comprehensive debugging ([5da8164](https://github.com/snailuu/semantic-release/commit/5da816440e33ecb07b6d188451de60c97ae09f49))
+
+### 🚀 New Alpha Development Cycle
+
 This alpha version starts a new development cycle after the beta release.
 
 
