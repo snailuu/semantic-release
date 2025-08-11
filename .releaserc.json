@@ -12,6 +12,7 @@
     }
   ],
   "plugins": [
+    "./plugins/version-manager.js",
     "@semantic-release/commit-analyzer",
     "@semantic-release/release-notes-generator",
     "@semantic-release/changelog",
