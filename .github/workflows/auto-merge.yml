@@ -1,14 +1,21 @@
 name: Auto Merge Down
 
+# 手动触发或者特定条件下触发，避免无限循环
 on:
-  push:
-    branches:
-      - main
-      - beta
-  workflow_run:
-    workflows: ["Release"]
-    types:
-      - completed
+  workflow_dispatch:
+    inputs:
+      source_branch:
+        description: 'Source branch to merge from'
+        required: true
+        default: 'main'
+        type: choice
+        options:
+        - main
+        - beta
+  
+  # 只在特定标签发布后触发，避免每次 release 都触发
+  release:
+    types: [published]
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
@@ -18,7 +25,6 @@ jobs:
   merge-down:
     name: Merge Down
     runs-on: ubuntu-latest
-    if: github.event_name == 'push' || (github.event.workflow_run.conclusion == 'success')
     
     permissions:
       contents: write
@@ -36,37 +42,47 @@ jobs:
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
 
-      - name: Merge main to beta
-        if: github.ref == 'refs/heads/main'
+      - name: Determine source branch
+        id: branch
         run: |
+          if [ "${{ github.event_name }}" == "workflow_dispatch" ]; then
+            echo "source=${{ github.event.inputs.source_branch }}" >> $GITHUB_OUTPUT
+          elif [ "${{ github.event_name }}" == "release" ]; then
+            # 从 release tag 判断来源分支
+            TAG_NAME="${{ github.event.release.tag_name }}"
+            if [[ "$TAG_NAME" == *"-alpha."* ]]; then
+              echo "source=alpha" >> $GITHUB_OUTPUT
+            elif [[ "$TAG_NAME" == *"-beta."* ]]; then
+              echo "source=beta" >> $GITHUB_OUTPUT
+            else
+              echo "source=main" >> $GITHUB_OUTPUT
+            fi
+          fi
+
+      - name: Merge main to beta and alpha
+        if: steps.branch.outputs.source == 'main'
+        run: |
+          # Merge main to beta
           git checkout beta
           git pull origin beta
           git merge main --no-ff -m "chore: merge main into beta [skip ci]"
           git push origin beta
+          
+          # Merge main to alpha
+          git checkout alpha
+          git pull origin alpha  
+          git merge main --no-ff -m "chore: merge main into alpha [skip ci]"
+          git push origin alpha
 
       - name: Merge beta to alpha
-        if: github.ref == 'refs/heads/main' || github.ref == 'refs/heads/beta'
+        if: steps.branch.outputs.source == 'beta'
         run: |
           git checkout alpha
           git pull origin alpha
           git merge beta --no-ff -m "chore: merge beta into alpha [skip ci]"
           git push origin alpha
-
-      - name: Check version conflicts and create PR if needed
-        if: github.ref == 'refs/heads/beta'
-        run: |
-          # 检查 alpha 分支是否需要版本重置
-          git checkout alpha
-          ALPHA_VERSION=$(git describe --tags --abbrev=0 2>/dev/null | grep -E "alpha" | head -1 || echo "")
-          git checkout beta
-          BETA_VERSION=$(git describe --tags --abbrev=0 2>/dev/null | grep -E "beta" | head -1 || echo "")
           
-          if [ -n "$BETA_VERSION" ] && [ -n "$ALPHA_VERSION" ]; then
-            BETA_BASE=$(echo $BETA_VERSION | sed 's/-beta.*//')
-            ALPHA_BASE=$(echo $ALPHA_VERSION | sed 's/-alpha.*//')
-            
-            if [ "$BETA_BASE" = "$ALPHA_BASE" ]; then
-              echo "Alpha branch needs version bump due to beta release"
-              echo "NEEDS_VERSION_BUMP=true" >> $GITHUB_ENV
-            fi
-          fi
+      - name: No downstream merge needed
+        if: steps.branch.outputs.source == 'alpha'
+        run: |
+          echo "Alpha branch has no downstream branches to merge to"
