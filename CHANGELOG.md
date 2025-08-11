@@ -1,3 +1,9 @@
+## [1.0.0-alpha.2](https://github.com/snailuu/semantic-release/compare/v1.0.0-alpha.1...v1.0.0-alpha.2) (2025-08-11)
+
+### Features
+
+* new alpha feat ([1bc2bc7](https://github.com/snailuu/semantic-release/commit/1bc2bc7fe99a8091e01ccd7fde7964bf6f16f8b7))
+
 ## 1.0.0-beta.1 (2025-08-11)
 
 ### Features
