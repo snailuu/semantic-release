@@ -1,3 +1,11 @@
+### 🧪 New Beta Testing Cycle
+
+This beta version starts a new testing cycle after main branch releases.
+
+
+
+## [1.1.0-beta.1](https://github.com/snailuu/semantic-release/compare/v1.0.0...v1.1.0-beta.1) (2025-08-11)
+
 ## 1.0.0 (2025-08-11)
 
 ### Features
