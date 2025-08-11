@@ -1,3 +1,15 @@
+### 🚀 New Alpha Development Cycle
+
+This alpha version starts a new development cycle after the beta release.
+
+
+
+## [1.0.0-alpha.3](https://github.com/snailuu/semantic-release/compare/v1.0.0-alpha.2...v1.0.0-alpha.3) (2025-08-11)
+
+### Features
+
+* add new feature for next alpha cycle ([418ca77](https://github.com/snailuu/semantic-release/commit/418ca77817579723efec17d0d952eef30cf9a075))
+
 ## [1.0.0-alpha.2](https://github.com/snailuu/semantic-release/compare/v1.0.0-alpha.1...v1.0.0-alpha.2) (2025-08-11)
 
 ### Features
