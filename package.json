@@ -1,6 +1,6 @@
 {
   "name": "@snailuu/semantic-release-demo",
-  "version": "1.0.0-beta.2",
+  "version": "1.0.0-alpha.6",
   "description": "",
   "main": "index.js",
   "scripts": {

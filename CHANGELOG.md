@@ -1,3 +1,39 @@
+### 🚀 New Alpha Development Cycle
+
+This alpha version starts a new development cycle after upstream releases.
+
+
+
+## [1.0.0-alpha.6](https://github.com/snailuu/semantic-release/compare/v1.0.0-alpha.5...v1.0.0-alpha.6) (2025-08-11)
+
+### Features
+
+* enhance version management plugin with comprehensive debugging ([5da8164](https://github.com/snailuu/semantic-release/commit/5da816440e33ecb07b6d188451de60c97ae09f49))
+
+### 🚀 New Alpha Development Cycle
+
+This alpha version starts a new development cycle after the beta release.
+
+
+
+## [1.0.0-alpha.5](https://github.com/snailuu/semantic-release/compare/v1.0.0-alpha.4...v1.0.0-alpha.5) (2025-08-11)
+
+### Features
+
+* 修改合并逻辑 ([77911b4](https://github.com/snailuu/semantic-release/commit/77911b47a88b3309f99b88c2ea19d04d0eb08f8c))
+
+### 🚀 New Alpha Development Cycle
+
+This alpha version starts a new development cycle after the beta release.
+
+
+
+## [1.0.0-alpha.4](https://github.com/snailuu/semantic-release/compare/v1.0.0-alpha.3...v1.0.0-alpha.4) (2025-08-11)
+
+### Features
+
+* new alpha feat ([f352d54](https://github.com/snailuu/semantic-release/commit/f352d542fe90790b52217bf9246ceda980dc43f5))
+
 ## [1.0.0-beta.2](https://github.com/snailuu/semantic-release/compare/v1.0.0-beta.1...v1.0.0-beta.2) (2025-08-11)
 
 ### Features
